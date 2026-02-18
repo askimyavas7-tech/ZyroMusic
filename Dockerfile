@@ -1,16 +1,14 @@
-FROM python:3.10-slim
+FROM python:3.13-slim
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        ffmpeg \
-        aria2 \
-    && apt-get clean && \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git ffmpeg curl && \
     rm -rf /var/lib/apt/lists/*
 
-COPY . /app
 WORKDIR /app
 
-RUN python -m pip install --no-cache-dir --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
+COPY . /app/
+
+RUN pip install --no-cache-dir -U pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 CMD ["bash", "start"]
