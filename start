@@ -1,1 +1,5 @@
-python3 -m TEAMZYRO
+#!/bin/bash
+
+echo "Starting TEAMZYRO..."
+
+python -m TEAMZYRO
