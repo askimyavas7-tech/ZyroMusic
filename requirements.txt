@@ -1,1 +1,12 @@
+pyrogram==2.0.106
+tgcrypto
+pytgcalls
 aiofiles
+python-dotenv
+motor
+dnspython
+yt-dlp
+aiohttp
+ffmpeg-python
+requests
+psutil
