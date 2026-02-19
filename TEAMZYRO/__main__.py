@@ -15,10 +15,8 @@ from config import BANNED_USERS
 
 
 async def init():
-    # Bootstrap'ten app ve userbot alıyoruz
-    app, api, userbot, platforms = init_all()
+    app, api, userbot = init_all()
 
-    # String kontrol
     if (
         not config.STRING1
         and not config.STRING2
@@ -26,14 +24,11 @@ async def init():
         and not config.STRING4
         and not config.STRING5
     ):
-        LOGGER(__name__).error(
-            "String Session Not Filled. Please fill a Pyrogram session."
-        )
+        LOGGER.error("String Session Not Filled.")
         raise SystemExit(1)
 
     await sudo()
 
-    # Banlı kullanıcıları yükle
     try:
         users = await get_gbanned()
         for user_id in users:
@@ -45,18 +40,15 @@ async def init():
     except Exception:
         pass
 
-    # Bot başlat
     await app.start()
 
-    # Pluginleri yükle
     for module in ALL_MODULES:
         importlib.import_module(f"TEAMZYRO.plugins.{module}")
 
-    LOGGER("TEAMZYRO.plugins").info("All Features Loaded ✅")
+    LOGGER.info("All Plugins Loaded ✅")
 
     await userbot.start()
 
-    # Voice Call sistemi başlat
     await ZYRO.start()
 
     try:
@@ -64,21 +56,19 @@ async def init():
             "https://te.legra.ph/file/29f784eb49d230ab62e9e.mp4"
         )
     except Exception:
-        LOGGER("TEAMZYRO").error(
-            "Voice chat aktif değil. Log grubunda voice chat başlat."
-        )
+        LOGGER.warning("Voice chat not active.")
 
     await ZYRO.decorators()
 
-    LOGGER("TEAMZYRO").info("ZYRO Music Bot Started Successfully 🎵")
+    LOGGER.info("ZYRO Bot Started Successfully 🎵")
 
     await idle()
 
     await app.stop()
     await userbot.stop()
 
-    LOGGER("TEAMZYRO").info("Bot stopped.")
+    LOGGER.info("Bot Stopped.")
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(init())
+    asyncio.run(init())
