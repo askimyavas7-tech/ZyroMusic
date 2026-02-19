@@ -8,3 +8,4 @@ aiohttp
 motor
 dnspython
 python-dotenv
+GitPython==3.1.43
