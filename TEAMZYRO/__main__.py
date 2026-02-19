@@ -2,7 +2,6 @@ import asyncio
 import importlib
 
 from pyrogram import idle
-from pytgcalls.exceptions import NoActiveGroupCall
 
 import config
 from TEAMZYRO.logging import LOGGER
@@ -16,9 +15,10 @@ from config import BANNED_USERS
 
 
 async def init():
-    # ✅ app ve userbot artık bootstrap'ten geliyor
+    # Bootstrap'ten app ve userbot alıyoruz
     app, api, userbot, platforms = init_all()
 
+    # String kontrol
     if (
         not config.STRING1
         and not config.STRING2
@@ -26,11 +26,14 @@ async def init():
         and not config.STRING4
         and not config.STRING5
     ):
-        LOGGER(__name__).error("String Session Not Filled. Please fill a Pyrogram session.")
+        LOGGER(__name__).error(
+            "String Session Not Filled. Please fill a Pyrogram session."
+        )
         raise SystemExit(1)
 
     await sudo()
 
+    # Banlı kullanıcıları yükle
     try:
         users = await get_gbanned()
         for user_id in users:
@@ -42,31 +45,38 @@ async def init():
     except Exception:
         pass
 
+    # Bot başlat
     await app.start()
 
-    # ✅ plugin import yolu düzeltildi
-    for all_module in ALL_MODULES:
-        importlib.import_module(f"TEAMZYRO.plugins.{all_module}")
+    # Pluginleri yükle
+    for module in ALL_MODULES:
+        importlib.import_module(f"TEAMZYRO.plugins.{module}")
 
-    LOGGER("TEAMZYRO.plugins").info("All Features Loaded...")
+    LOGGER("TEAMZYRO.plugins").info("All Features Loaded ✅")
+
     await userbot.start()
 
+    # Voice Call sistemi başlat
     await ZYRO.start()
+
     try:
-        await ZYRO.stream_call("https://te.legra.ph/file/29f784eb49d230ab62e9e.mp4")
-    except NoActiveGroupCall:
-        LOGGER("TEAMZYRO").error("Please start your log group voice chat. Bot stopping...")
-        raise SystemExit(1)
+        await ZYRO.stream_call(
+            "https://te.legra.ph/file/29f784eb49d230ab62e9e.mp4"
+        )
     except Exception:
-        pass
+        LOGGER("TEAMZYRO").error(
+            "Voice chat aktif değil. Log grubunda voice chat başlat."
+        )
 
     await ZYRO.decorators()
 
-    LOGGER("TEAMZYRO").info("ZYRO Music Bot Started ✅")
+    LOGGER("TEAMZYRO").info("ZYRO Music Bot Started Successfully 🎵")
 
     await idle()
+
     await app.stop()
     await userbot.stop()
+
     LOGGER("TEAMZYRO").info("Bot stopped.")
 
 
