@@ -1,12 +1,10 @@
 pyrogram==2.0.106
 tgcrypto
-pytgcalls
-aiofiles
-python-dotenv
+pytgcalls==3.0.0.dev24
+yt-dlp
+ffmpeg-python
 motor
 dnspython
-yt-dlp
 aiohttp
-ffmpeg-python
-requests
-psutil
+python-dotenv
+apscheduler
