@@ -5,7 +5,9 @@ from pyrogram import idle
 from pytgcalls.exceptions import NoActiveGroupCall
 
 import config
-from TEAMZYRO import LOGGER, app, userbot
+from TEAMZYRO.logging import LOGGER
+from TEAMZYRO.bootstrap import init_all
+
 from TEAMZYRO.core.call import ZYRO
 from TEAMZYRO.misc import sudo
 from TEAMZYRO.plugins import ALL_MODULES
@@ -14,6 +16,9 @@ from config import BANNED_USERS
 
 
 async def init():
+    # ✅ app ve userbot artık bootstrap'ten geliyor
+    app, api, userbot, platforms = init_all()
+
     if (
         not config.STRING1
         and not config.STRING2
@@ -21,41 +26,48 @@ async def init():
         and not config.STRING4
         and not config.STRING5
     ):
-        LOGGER(__name__).error("𝐒𝐭𝐫𝐢𝐧𝐠 𝐒𝐞𝐬𝐬𝐢𝐨𝐧 𝐍𝐨𝐭 𝐅𝐢𝐥𝐥𝐞𝐝, 𝐏𝐥𝐞𝐚𝐬𝐞 𝐅𝐢𝐥𝐥 𝐀 𝐏𝐲𝐫𝐨𝐠𝐫𝐚𝐦 𝐒𝐞𝐬𝐬𝐢𝐨𝐧")
-        exit()
+        LOGGER(__name__).error("String Session Not Filled. Please fill a Pyrogram session.")
+        raise SystemExit(1)
+
     await sudo()
+
     try:
         users = await get_gbanned()
         for user_id in users:
             BANNED_USERS.add(user_id)
+
         users = await get_banned_users()
         for user_id in users:
             BANNED_USERS.add(user_id)
-    except:
+    except Exception:
         pass
+
     await app.start()
+
+    # ✅ plugin import yolu düzeltildi
     for all_module in ALL_MODULES:
-        importlib.import_module("TEAMZYRO.plugins" + all_module)
-    LOGGER("TEAMZYRO.plugins").info("𝐀𝐥𝐥 𝐅𝐞𝐚𝐭𝐮𝐫𝐞𝐬 𝐋𝐨𝐚𝐝𝐞𝐝 𝐁𝐚𝐛𝐲🥳...")
+        importlib.import_module(f"TEAMZYRO.plugins.{all_module}")
+
+    LOGGER("TEAMZYRO.plugins").info("All Features Loaded...")
     await userbot.start()
+
     await ZYRO.start()
     try:
         await ZYRO.stream_call("https://te.legra.ph/file/29f784eb49d230ab62e9e.mp4")
     except NoActiveGroupCall:
-        LOGGER("TEAMZYRO").error(
-            "𝗣𝗹𝗭 𝗦𝗧𝗔𝗥𝗧 𝗬𝗢𝗨𝗥 𝗟𝗢𝗚 𝗚𝗥𝗢𝗨𝗣 𝗩𝗢𝗜𝗖𝗘𝗖𝗛𝗔𝗧\𝗖𝗛𝗔𝗡𝗡𝗘𝗟\n\nZYRO 𝗕𝗢𝗧 𝗦𝗧𝗢𝗣........"
-        )
-        exit()
-    except:
+        LOGGER("TEAMZYRO").error("Please start your log group voice chat. Bot stopping...")
+        raise SystemExit(1)
+    except Exception:
         pass
+
     await ZYRO.decorators()
-    LOGGER("TEAMZYRO").info(
-        "╔═════ஜ۩۞۩ஜ════╗\n  ☠︎︎𝗠𝗔𝗗𝗘 𝗕𝗬 𝗠𝗥 ZYRO☠︎︎\n╚═════ஜ۩۞۩ஜ════╝"
-    )
+
+    LOGGER("TEAMZYRO").info("ZYRO Music Bot Started ✅")
+
     await idle()
     await app.stop()
     await userbot.stop()
-    LOGGER("TEAMZYRO").info("𝗦𝗧𝗢𝗣 ZYRO 𝗠𝗨𝗦𝗜𝗖🎻 𝗕𝗢𝗧..")
+    LOGGER("TEAMZYRO").info("Bot stopped.")
 
 
 if __name__ == "__main__":
