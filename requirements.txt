@@ -11,3 +11,5 @@ python-dotenv
 GitPython==3.1.43
 heroku3==5.2.1
 SafoneAPI
+beautifulsoup4==4.12.3
+lxml
