@@ -1,14 +1,22 @@
-FROM python:3.13-slim
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git ffmpeg curl && \
-    rm -rf /var/lib/apt/lists/*
+    git ffmpeg curl build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
+COPY requirements.txt /app/requirements.txt
+RUN pip install -U pip setuptools wheel \
+    && pip install -r /app/requirements.txt
+
 COPY . /app/
 
-RUN pip install --no-cache-dir -U pip && \
-    pip install --no-cache-dir -r requirements.txt
+# start dosyası execute değilse çalışmaz, garantiye alıyoruz
+RUN chmod +x /app/start || true
 
-CMD ["bash", "start"]
+CMD ["bash", "/app/start"]
